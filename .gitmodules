@@ -1,0 +1,3 @@
+[submodule "contrib/pcg-c-basic"]
+	path = contrib/pcg-c-basic
+	url = https://github.com/imneme/pcg-c-basic
