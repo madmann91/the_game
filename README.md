@@ -20,7 +20,7 @@ It is a cooperative game where the original rules are:
   on a certain pile.
 
 Note: This project is in no way affiliated with the creators of the original game.
-Please buy the game if you intend to play it with friends, this project is only test different AI strategies.
+Please buy the game if you intend to play it with friends, this project is only designed to evaluate different AI strategies.
 
 # Building
 
