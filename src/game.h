@@ -50,6 +50,7 @@ struct game {
     size_t req_hand_size;
     size_t req_move_count_full;
     size_t req_move_count_empty;
+    size_t jump_count;
 };
 
 void swap_cards(card_t* a, card_t* b);
@@ -57,9 +58,9 @@ void swap_cards(card_t* a, card_t* b);
 struct pile new_pile(enum pile_type type, size_t max_card_count);
 void free_pile(struct pile* pile);
 card_t last_card(const struct pile* pile);
-bool can_place_card(struct pile* pile, card_t card);
+bool can_place_card(const struct pile* pile, card_t card);
 void place_card(struct pile* pile, card_t card);
-bool can_take_card(struct pile* pile);
+bool can_take_card(const struct pile* pile);
 card_t take_card(struct pile* pile);
 size_t find_card(const struct pile* pile, card_t card);
 bool contains_card(const struct pile* pile, card_t card);

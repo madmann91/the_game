@@ -23,12 +23,17 @@ card_t last_card(const struct pile* pile) {
     return pile->cards[pile->card_count - 1];
 }
 
-bool can_place_card(struct pile* pile, card_t card) {
+static inline card_t jump_card(const struct pile* pile) {
+    assert(pile->type == UP_PILE || pile->type == DOWN_PILE);
+    return last_card(pile) + (pile->type == UP_PILE ? -10 : 10);
+}
+
+bool can_place_card(const struct pile* pile, card_t card) {
     switch (pile->type) {
         case UP_PILE:
-            return last_card(pile) == card + 10 || last_card(pile) < card;
+            return card > last_card(pile) || card == last_card(pile) - 10;
         case DOWN_PILE:
-            return last_card(pile) == card - 10 || last_card(pile) > card;
+            return card < last_card(pile) || card == last_card(pile) + 10;
         default:
             return true;
     }
@@ -39,7 +44,7 @@ void place_card(struct pile* pile, card_t card) {
     pile->cards[pile->card_count++] = card;
 }
 
-bool can_take_card(struct pile* pile) {
+bool can_take_card(const struct pile* pile) {
     return pile->card_count > 0;
 }
 
@@ -133,6 +138,7 @@ struct game new_game(
     game.state = RUNNING;
     game.min_card = min_card;
     game.max_card = max_card;
+    game.jump_count = 0;
     return game;
 }
 
@@ -158,6 +164,7 @@ void reset_game(struct game* game, pcg32_random_t* rnd) {
         refill_hand(&game->players[i], game);
     }
     game->cur_player = 0;
+    game->jump_count = 0;
     game->state = RUNNING;
 }
 
@@ -230,6 +237,8 @@ void apply_move(struct game* game, struct player* player, const struct move* mov
     assert(player == &game->players[game->cur_player]);
     assert(move->pile_index < game->pile_count);
     assert(contains_card(&player->hand, move->card));
+    if (jump_card(&game->piles[move->pile_index]) == move->card)
+        game->jump_count++;
     remove_card(&player->hand, find_card(&player->hand, move->card));
     place_card(&game->piles[move->pile_index], move->card);
     game->move_count++;

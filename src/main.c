@@ -62,7 +62,7 @@ static inline bool check_arg(int i, int n, int argc, char** argv) {
 }
 
 static inline void play_game(struct game* game, const struct options* options, pcg32_random_t* rnd) {
-    size_t wins = 0;
+    size_t wins = 0, jumps = 0;
     for (size_t i = 0; i < options->run_count; ++i) {
         while (game->state == RUNNING) {
             if (options->verbose)
@@ -72,6 +72,7 @@ static inline void play_game(struct game* game, const struct options* options, p
             play_turn(game);
         }
         wins += game->state == WON;
+        jumps += game->jump_count;
         if (i != options->run_count - 1)
             reset_game(game, rnd);
     }
@@ -92,7 +93,8 @@ static inline void play_game(struct game* game, const struct options* options, p
     } else {
         size_t losses = options->run_count - wins;
         printf("%zu wins, %zu losses, %.2g%% success\n", wins, losses, (double)wins*100.0/(double)options->run_count);
-   }
+    }
+    printf("There %s %zu jump(s) during the game(s)\n", jumps > 1 ? "were" : "was", jumps);
 }
 
 int main(int argc, char** argv) {
